@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ULink | Connect, Share, Inspire</title>
+  <!-- SEO & Meta Tags -->
+  <meta name="description" content="ULink is a premium glassmorphic social media platform. Share photos, vertical reels, private stories, and stay connected with real-time messaging.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%23e6683c'/><stop offset='50%' stop-color='%23dc2743'/><stop offset='100%' stop-color='%23bc1888'/></linearGradient></defs><rect width='24' height='24' rx='6' fill='url(%23g)'/><text x='50%' y='70%' font-size='15' font-family='sans-serif' font-weight='bold' text-anchor='middle' fill='white'>U</text></svg>">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Background Ambient Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- AUTHENTICATION PANELS (Login/Register) -->
+  <div id="auth-container" class="auth-wrapper" style="display: none;">
+    <div class="auth-card glass-panel">
+      <div class="auth-header">
+        <h1 class="logo-text">ULink</h1>
+        <p class="auth-subtitle">Connect. Share. Inspire.</p>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active">
+        <div class="input-group">
+          <input type="text" id="login-username" required placeholder=" ">
+          <label for="login-username"><i class="fa-regular fa-user"></i> Username or Email</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="login-password" required placeholder=" ">
+          <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+        </div>
+        <div class="error-msg" id="login-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+        <p class="auth-footer">Don't have an account? <a href="#" id="go-to-register">Sign up</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form">
+        <div class="input-group">
+          <input type="text" id="register-username" required placeholder=" ">
+          <label for="register-username"><i class="fa-regular fa-user"></i> Username</label>
+        </div>
+        <div class="input-group">
+          <input type="email" id="register-email" required placeholder=" ">
+          <label for="register-email"><i class="fa-regular fa-envelope"></i> Email</label>
+        </div>
+        <div class="input-group">
+          <input type="text" id="register-name" required placeholder=" ">
+          <label for="register-name"><i class="fa-solid fa-signature"></i> Full Name</label>
+        </div>
+        <div class="input-group">
+          <input type="password" id="register-password" required placeholder=" ">
+          <label for="register-password"><i class="fa-solid fa-lock"></i> Password</label>
+        </div>
+        <div class="error-msg" id="register-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+        <p class="auth-footer">Already have an account? <a href="#" id="go-to-login">Log in</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION SHELL (Visible when logged in) -->
+  <div id="app-container" class="app-layout" style="display: none;">
+    
+    <!-- Navigation Sidebar (Desktop Left, Mobile Bottom) -->
+    <nav class="sidebar glass-panel">
+      <div class="nav-logo">
+        <a href="#feed" style="text-decoration: none;"><h2 class="logo-text" style="cursor: pointer;">ULink</h2></a>
+        <a href="#feed" class="logo-icon" style="text-decoration: none;"><i class="fa-solid fa-link"></i></a>
+      </div>
+
+      <div class="nav-links">
+        <a href="#feed" class="nav-link active" data-view="feed" id="nav-btn-feed">
+          <i class="fa-solid fa-house"></i> <span>Home</span>
+        </a>
+        <a href="#explore" class="nav-link" data-view="explore" id="nav-btn-explore">
+          <i class="fa-solid fa-compass"></i> <span>Explore</span>
+        </a>
+        <a href="#reels" class="nav-link" data-view="reels" id="nav-btn-reels">
+          <i class="fa-solid fa-clapperboard"></i> <span>Reels</span>
+        </a>
+        <a href="#dms" class="nav-link" data-view="dms" id="nav-btn-dms">
+          <i class="fa-solid fa-paper-plane"></i> <span>Messages</span>
+          <span class="unread-badge" id="dm-unread-badge" style="display: none;">0</span>
+        </a>
+        <a href="#activity" class="nav-link" data-view="activity" id="nav-btn-activity">
+          <i class="fa-regular fa-heart"></i> <span>Activity</span>
+          <span class="unread-badge" id="activity-unread-badge" style="display: none;">0</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-btn-create">
+          <i class="fa-regular fa-square-plus"></i> <span>Create</span>
+        </a>
+        <a href="#profile" class="nav-link" data-view="profile" id="nav-btn-profile">
+          <img src="/uploads/avatars/default.svg" alt="Avatar" class="nav-avatar" id="nav-user-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+          <span>Profile</span>
+        </a>
+      </div>
+
+
+    </nav>
+
+    <!-- Main Viewport Area -->
+    <main class="main-content">
+      
+      <!-- TOP BAR (Mobile logo and actions) -->
+      <header class="mobile-header glass-panel">
+        <a href="#feed" style="text-decoration: none;"><h1 class="logo-text" style="cursor: pointer;">ULink</h1></a>
+        <div class="mobile-actions">
+          <button id="mobile-btn-create" title="Create Post"><i class="fa-regular fa-square-plus"></i></button>
+          <a href="#activity" id="mobile-btn-activity" title="Activity" style="position: relative;">
+            <i class="fa-regular fa-heart"></i>
+            <span class="unread-badge" id="mobile-activity-unread-badge" style="display: none;">0</span>
+          </a>
+          <a href="#dms" id="mobile-btn-dms" title="Messages" style="position: relative;">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span class="unread-badge" id="mobile-unread-badge" style="display: none;">0</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- 1. FEED VIEW -->
+      <section id="view-feed" class="app-view active">
+        <div class="feed-layout">
+          <div class="feed-left">
+            <!-- Stories Circles Slider -->
+            <div class="stories-bar glass-panel scroll-x">
+              <div class="story-circle add-story" id="btn-add-story">
+                <div class="avatar-ring">
+                  <img src="/uploads/avatars/default.svg" alt="My avatar" class="story-avatar" id="story-my-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+                  <span class="plus-icon"><i class="fa-solid fa-plus"></i></span>
+                </div>
+                <span class="story-username">Your Story</span>
+              </div>
+              <div id="stories-list" class="stories-flex-container">
+                <!-- Stories load dynamically here -->
+              </div>
+            </div>
+
+            <!-- Posts List Container -->
+            <div id="posts-container" class="posts-flex-container">
+              <!-- Posts render dynamically -->
+            </div>
+          </div>
+
+          <!-- Feed Right Sidebar (Desktop only suggestions) -->
+          <div class="feed-right">
+            <div class="profile-preview glass-panel">
+              <img src="/uploads/avatars/default.svg" alt="Avatar" class="avatar-lg" id="feed-sidebar-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+              <div class="profile-info">
+                <span class="profile-username" id="feed-sidebar-username">Username</span>
+                <span class="profile-fullname" id="feed-sidebar-fullname">Full Name</span>
+              </div>
+              <a href="#" class="btn-text" id="feed-sidebar-logout-btn" style="color: var(--accent-pink); font-weight: 600;">Log Out</a>
+            </div>
+            <div class="suggestions-card glass-panel">
+              <div class="card-header">
+                <h3>Suggested for you</h3>
+                <a href="#explore" class="btn-text">See All</a>
+              </div>
+              <div id="suggestions-list" class="suggestions-list">
+                <!-- Suggestions load dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. EXPLORE VIEW -->
+      <section id="view-explore" class="app-view">
+        <div class="explore-layout">
+          <!-- Search Header -->
+          <div class="search-bar-wrapper glass-panel">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="explore-search-input" placeholder="Search creators, hashtags, or locations...">
+            <button id="search-clear-btn" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <!-- Live Search Results Grid (Users / Hashtags) -->
+          <div id="search-results-section" style="display: none;">
+            <div class="search-results-wrapper glass-panel">
+              <h3 class="section-title">Search Results</h3>
+              <div id="search-users-list" class="search-users-flex"></div>
+              <div id="search-posts-grid" class="explore-grid"></div>
+            </div>
+          </div>
+
+          <!-- Default Explore Page: Grid and Trends -->
+          <div id="explore-default-content">
+            <div class="trending-hashtags-wrapper glass-panel scroll-x">
+              <span class="trend-tag" data-tag="#cyberpunk">#cyberpunk</span>
+              <span class="trend-tag" data-tag="#glassmorphism">#glassmorphism</span>
+              <span class="trend-tag" data-tag="#nature">#nature</span>
+              <span class="trend-tag" data-tag="#fitness">#fitness</span>
+              <span class="trend-tag" data-tag="#travel">#travel</span>
+              <span class="trend-tag" data-tag="#coding">#coding</span>
+              <span class="trend-tag" data-tag="#ulink">#ulink</span>
+            </div>
+
+            <div id="explore-grid-container" class="explore-grid">
+              <!-- Grid renders here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. REELS VIEW -->
+      <section id="view-reels" class="app-view">
+        <div class="reels-container" id="reels-scroll-container">
+          <!-- Vertical Reels loaded here -->
+        </div>
+      </section>
+
+      <!-- 4. DIRECT MESSAGES VIEW -->
+      <section id="view-dms" class="app-view">
+        <div class="dms-layout glass-panel">
+          
+          <!-- Threads list Sidebar -->
+          <div class="dms-sidebar">
+            <div class="sidebar-header">
+              <h3>Messages</h3>
+              <button id="btn-start-chat" title="New Message"><i class="fa-regular fa-pen-to-square"></i></button>
+            </div>
+            <div class="threads-list" id="threads-container">
+              <!-- Chat lists load here -->
+            </div>
+          </div>
+
+          <!-- Chat Window -->
+          <div class="dms-chat-window" id="chat-window-fallback">
+            <div class="chat-fallback-content">
+              <div class="paperplane-icon"><i class="fa-regular fa-paper-plane"></i></div>
+              <h2>Your Messages</h2>
+              <p>Send private photos, videos, and voice notes to a friend or group.</p>
+              <button class="btn btn-primary" id="btn-fallback-new-msg">Send Message</button>
+            </div>
+          </div>
+
+          <div class="dms-chat-window" id="chat-window-active" style="display: none;">
+            <div class="chat-header">
+              <div class="chat-user-info">
+                <img src="/uploads/avatars/default.svg" alt="Chat avatar" class="avatar-sm" id="chat-header-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+                <div>
+                  <h4 id="chat-header-name">Conversation User</h4>
+                  <span class="typing-indicator-text" id="chat-header-typing" style="display: none;">typing...</span>
+                </div>
+              </div>
+              <div class="chat-actions">
+                <button id="chat-btn-info" title="Chat Info"><i class="fa-solid fa-circle-info"></i></button>
+              </div>
+            </div>
+
+            <!-- Messages area -->
+            <div class="chat-messages-container" id="chat-messages-list">
+              <!-- Message bubbles loaded here -->
+            </div>
+
+            <!-- Chat Keyboard panel -->
+            <div class="chat-input-bar">
+              <!-- Emoji Picker Icon -->
+              <button id="chat-btn-sticker" title="Stickers & Emojis"><i class="fa-regular fa-face-smile"></i></button>
+              
+              <!-- File uploads -->
+              <button id="chat-btn-attach" title="Attach Media"><i class="fa-solid fa-paperclip"></i></button>
+              <input type="file" id="chat-file-input" style="display: none;" accept="image/*,video/*">
+
+              <!-- Audio Recorder element -->
+              <button id="chat-btn-voice" title="Record Voice"><i class="fa-solid fa-microphone"></i></button>
+              <div class="voice-recorder-overlay" id="voice-recorder-panel" style="display: none;">
+                <span class="timer" id="voice-timer">00:00</span>
+                <div class="visualizer-container">
+                  <canvas id="voice-visualizer"></canvas>
+                </div>
+                <button class="btn-circle btn-danger" id="voice-btn-cancel" title="Cancel"><i class="fa-solid fa-trash"></i></button>
+                <button class="btn-circle btn-success" id="voice-btn-send" title="Send Voice Note"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+
+              <!-- Main Input -->
+              <input type="text" id="chat-message-input" placeholder="Message...">
+              <button id="chat-btn-send" class="btn-text" style="display: none;">Send</button>
+            </div>
+            
+            <!-- Sticker Popup panel -->
+            <div class="sticker-popup glass-panel" id="sticker-container" style="display: none;">
+              <div class="sticker-tabs">
+                <span class="sticker-tab active" data-tab="stickers">Stickers</span>
+                <span class="sticker-tab" data-tab="emojis">Emojis</span>
+              </div>
+              <div class="sticker-grid" id="stickers-selector">
+                <span class="sticker-item">🔥</span>
+                <span class="sticker-item">❤️</span>
+                <span class="sticker-item">😂</span>
+                <span class="sticker-item">🎉</span>
+                <span class="sticker-item">💻</span>
+                <span class="sticker-item">🚀</span>
+                <span class="sticker-item">👀</span>
+                <span class="sticker-item">💡</span>
+                <span class="sticker-item">🙌</span>
+                <span class="sticker-item">💯</span>
+                <span class="sticker-item">✨</span>
+                <span class="sticker-item">🌟</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PROFILE VIEW -->
+      <section id="view-profile" class="app-view">
+        <div class="profile-layout">
+          <!-- Profile Header -->
+          <div class="profile-header-card glass-panel">
+            <div class="profile-header-left">
+              <div class="avatar-ring large" id="profile-avatar-trigger">
+                <img src="/uploads/avatars/default.svg" alt="Avatar" class="avatar-xl" id="profile-details-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+                <span class="edit-overlay"><i class="fa-solid fa-camera"></i></span>
+              </div>
+              <input type="file" id="profile-avatar-file" style="display: none;" accept="image/*">
+            </div>
+
+            <div class="profile-header-right">
+              <div class="profile-meta-row">
+                <h2 id="profile-details-username">username</h2>
+                <div class="profile-actions-wrapper">
+                  <!-- Toggled via status -->
+                  <button class="btn btn-danger" id="profile-btn-logout">Log Out</button>
+                  <button class="btn btn-secondary" id="profile-btn-settings" style="display: none;" title="Settings"><i class="fa-solid fa-gear"></i></button>
+                  <button class="btn btn-primary" id="profile-btn-follow" style="display: none;">Follow</button>
+                  <button class="btn btn-secondary" id="profile-btn-unfollow" style="display: none;">Unfollow</button>
+                  <button class="btn btn-secondary" id="profile-btn-privacy-actions" style="display: none;" title="Privacy settings"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+              </div>
+
+              <div class="profile-stats-row">
+                <span><strong id="profile-stats-posts">0</strong> posts</span>
+                <span id="profile-trigger-followers"><strong id="profile-stats-followers">0</strong> followers</span>
+                <span id="profile-trigger-following"><strong id="profile-stats-following">0</strong> following</span>
+              </div>
+
+              <div class="profile-bio-row">
+                <h4 id="profile-details-fullname">Full Name</h4>
+                <p id="profile-details-bio">This is the profile bio area.</p>
+                <div class="profile-badge-row" id="profile-private-badge" style="display: none;">
+                  <span class="badge badge-private"><i class="fa-solid fa-lock"></i> Private Account</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story Highlights Row -->
+          <div class="highlights-carousel glass-panel scroll-x">
+            <div class="highlight-item add-highlight" id="profile-btn-add-highlight" style="display: none;">
+              <div class="highlight-ring">
+                <span class="plus-icon"><i class="fa-solid fa-plus"></i></span>
+              </div>
+              <span>New Highlight</span>
+            </div>
+            <div id="profile-highlights-list" class="highlights-flex-container">
+              <!-- User highlights render here -->
+            </div>
+          </div>
+
+          <!-- Profile Tabs -->
+          <div class="profile-tabs-wrapper glass-panel">
+            <div class="profile-tab active" data-tab="posts"><i class="fa-solid fa-grid-3x3"></i> Posts</div>
+            <div class="profile-tab" data-tab="reels"><i class="fa-solid fa-clapperboard"></i> Reels</div>
+            <div class="profile-tab" data-tab="saved" id="profile-tab-saved"><i class="fa-regular fa-bookmark"></i> Saved</div>
+          </div>
+
+          <!-- Media grid -->
+          <div id="profile-posts-grid" class="profile-posts-grid">
+            <!-- Grid posts dynamic load -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. ACTIVITY VIEW -->
+      <section id="view-activity" class="app-view">
+        <div class="activity-layout glass-panel">
+          <div class="activity-header">
+            <h2>Activity</h2>
+            <button class="btn btn-secondary" id="btn-clear-activity" style="font-size: 0.8rem; padding: 6px 12px;"><i class="fa-solid fa-check-double"></i> Mark all as read</button>
+          </div>
+          <div class="activity-list" id="activity-list">
+            <!-- Dynamic notifications list -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FLOATING MODALS -->
+
+  <!-- A. CREATE POST / REEL MODAL -->
+  <div class="modal-overlay" id="modal-create-post">
+    <div class="modal-card glass-panel wide animate-zoom">
+      <div class="modal-header">
+        <h3>Create New Post</h3>
+        <button class="modal-close" id="create-post-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="create-post-layout">
+        
+        <!-- Media Dropzone/Preview -->
+        <div class="create-media-section" id="create-media-dropzone">
+          <div class="dropzone-placeholder" id="dropzone-text">
+            <i class="fa-regular fa-images"></i>
+            <p style="margin-bottom: 4px;">Drag photos and videos here or click to upload</p>
+            <span style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; display: block;">(Select up to 10 photos/videos for a carousel post)</span>
+            <button class="btn btn-primary">Select from computer</button>
+          </div>
+          <input type="file" id="create-post-files" multiple accept="image/*,video/*" style="display: none;">
+          
+          <!-- Media Carousel Previewer -->
+          <div class="preview-carousel-wrapper" id="create-media-previewer" style="display: none;">
+            <div class="preview-slider" id="preview-carousel-slider"></div>
+            <button class="carousel-arrow prev" id="preview-prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="carousel-arrow next" id="preview-next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="carousel-indicators" id="preview-indicators"></div>
+          </div>
+        </div>
+
+        <!-- Details, Filter & Tagging Pane -->
+        <div class="create-details-section">
+          <!-- Type selection -->
+          <div class="form-group flex-row">
+            <label>Share as:</label>
+            <div class="switch-field">
+              <input type="radio" id="type-post" name="post-type" value="post" checked>
+              <label for="type-post">Standard Post</label>
+              <input type="radio" id="type-reel" name="post-type" value="reel">
+              <label for="type-reel">Vertical Reel</label>
+            </div>
+          </div>
+
+          <!-- Interactive CSS Photo Filter selector (Dynamic thumbs!) -->
+          <div class="form-group" id="filter-section-wrapper">
+            <label>Select filter style:</label>
+            <div class="filter-thumbnails-list scroll-x" id="filters-thumb-list">
+              <!-- Loaded dynamically with filter options -->
+            </div>
+          </div>
+
+          <div class="form-group">
+            <textarea id="create-post-caption" placeholder="Write a caption... (e.g. #nature #cyberpunk)" rows="4"></textarea>
+          </div>
+
+          <div class="form-group">
+            <div class="input-with-icon">
+              <i class="fa-solid fa-location-dot"></i>
+              <input type="text" id="create-post-location" placeholder="Add location tag (e.g. London, UK)">
+            </div>
+          </div>
+
+          <div class="error-msg" id="create-post-error"></div>
+          <button class="btn btn-primary btn-block" id="create-post-submit">Share Post</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- B. FULLSCREEN STORIES VIEWER MODAL -->
+  <div class="modal-overlay dark-overlay" id="modal-stories-viewer">
+    <div class="stories-viewer-container animate-fade">
+      
+      <!-- Progress Bar strips at top -->
+      <div class="stories-progress-bars" id="stories-progress-container">
+        <!-- Bars created programmatically -->
+      </div>
+
+      <!-- Story header -->
+      <div class="story-viewer-header">
+        <div class="story-user-details">
+          <img src="/uploads/avatars/default.svg" alt="Avatar" class="avatar-sm" id="story-viewer-avatar" onerror="this.onerror=null; this.src='/uploads/avatars/default.svg';">
+          <span class="story-viewer-username" id="story-viewer-username">username</span>
+          <span class="story-viewer-time" id="story-viewer-time"></span>
+          <span class="badge badge-close-friends" id="story-viewer-cf-badge" style="display: none;">Close Friends</span>
+        </div>
+        <button class="story-viewer-close" id="btn-story-viewer-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Slide content viewport -->
+      <div class="story-viewer-viewport" id="story-viewer-content">
+        <!-- Rendered dynamically (Image, Video, Text overlay) -->
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="story-arrow left" id="story-viewer-prev"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="story-arrow right" id="story-viewer-next"><i class="fa-solid fa-chevron-right"></i></button>
+
+      <!-- Bottom actions (Highlights aggregator & reply) -->
+      <div class="story-viewer-footer">
+        <button class="btn btn-secondary btn-icon" id="story-viewer-btn-highlight" title="Save to Highlights">
+          <i class="fa-regular fa-heart"></i> Add to Highlight
+        </button>
+        <button class="btn btn-danger btn-icon" id="story-viewer-btn-delete" title="Delete Story" style="display: none;">
+          <i class="fa-solid fa-trash"></i> Delete Story
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. CREATE STORY MODAL -->
+  <div class="modal-overlay" id="modal-create-story">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3>Post to Story</h3>
+        <button class="modal-close" id="create-story-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="story-creator-box" id="story-upload-box">
+          <div class="dropzone-placeholder">
+            <i class="fa-solid fa-camera"></i>
+            <p>Upload a photo or short vertical video</p>
+            <button class="btn btn-primary">Select file</button>
+          </div>
+          <input type="file" id="create-story-file" accept="image/*,video/*" style="display: none;">
+          
+          <!-- Story preview screen -->
+          <div class="story-preview-screen" id="story-media-preview" style="display: none;">
+            <div id="story-preview-viewport"></div>
+            <input type="text" id="story-text-overlay" class="story-text-input" placeholder="Type text overlay here...">
+          </div>
+        </div>
+        <div class="error-msg" id="create-story-error"></div>
+        <button class="btn btn-primary btn-block" id="create-story-submit" style="display: none;">Add to Story</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. HIGHLIGHT BUILDER MODAL -->
+  <div class="modal-overlay" id="modal-build-highlight">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3>Create Story Highlight</h3>
+        <button class="modal-close" id="build-highlight-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="highlight-title-input">Highlight Name:</label>
+          <input type="text" id="highlight-title-input" required placeholder="e.g. Vacation, Coding">
+        </div>
+        <label>Select active/recent stories to add:</label>
+        <div class="stories-selector-grid" id="highlight-stories-selector">
+          <!-- Active user stories populate here -->
+        </div>
+        <div class="error-msg" id="build-highlight-error"></div>
+        <button class="btn btn-primary btn-block" id="build-highlight-submit">Create Highlight</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. PRIVACY SETTINGS MODAL -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal-card glass-panel animate-zoom">
+      <div class="modal-header">
+        <h3>Settings & Security</h3>
+        <button class="modal-close" id="settings-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="settings-tabs-wrapper">
+        <div class="settings-tab active" data-stab="profile">Profile</div>
+        <div class="settings-tab" data-stab="privacy">Privacy</div>
+        <div class="settings-tab" data-stab="password">Password</div>
+        <div class="settings-tab text-warning" data-stab="logout" id="settings-tab-logout-btn">Log Out</div>
+        <div class="settings-tab text-danger" data-stab="danger">Danger Zone</div>
+      </div>
+      
+      <div class="modal-body settings-panes">
+        
+        <!-- Tab 1: Edit Profile details -->
+        <div class="settings-pane active" id="spane-profile">
+          <div class="form-group">
+            <label for="set-fullname">Full Name:</label>
+            <input type="text" id="set-fullname" placeholder="Display name">
+          </div>
+          <div class="form-group">
+            <label for="set-bio">Bio:</label>
+            <textarea id="set-bio" rows="3" placeholder="Tell us about yourself..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="btn-settings-save-profile">Save Details</button>
+          <div class="success-msg" id="set-profile-success"></div>
+        </div>
+
+        <!-- Tab 2: Account Privacy and Blocked list -->
+        <div class="settings-pane" id="spane-privacy">
+          <div class="form-group flex-row justify-between">
+            <div>
+              <h4>Private Account</h4>
+              <p class="text-muted text-sm">Only approved followers can view your posts and stories.</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="set-privacy-toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <h4>Blocked Users List</h4>
+          <div class="blocked-list-container" id="settings-blocked-list">
+            <p class="text-muted text-sm">No users blocked yet.</p>
+          </div>
+        </div>
+
+        <!-- Tab 3: Change password -->
+        <div class="settings-pane" id="spane-password">
+          <div class="form-group">
+            <label for="set-old-password">Old Password:</label>
+            <input type="password" id="set-old-password" required>
+          </div>
+          <div class="form-group">
+            <label for="set-new-password">New Password:</label>
+            <input type="password" id="set-new-password" required>
+          </div>
+          <div class="error-msg" id="set-password-error"></div>
+          <div class="success-msg" id="set-password-success"></div>
+          <button class="btn btn-primary" id="btn-settings-save-password">Update Password</button>
+        </div>
+
+        <!-- Tab 4: Delete account -->
+        <div class="settings-pane" id="spane-danger">
+          <div class="danger-box glass-panel">
+            <h4>Delete Account Permanently</h4>
+            <p class="text-muted text-sm mb-4">Deleting your account removes all posts, comments, followers, messages, and matches from ULink. This operation cannot be undone.</p>
+            <button class="btn btn-danger" id="btn-settings-delete-account">Delete My Account</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- F. CHAT MODAL (Start Chat / New Message Dialog) -->
+  <div class="modal-overlay" id="modal-start-chat">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3>New Message</h3>
+        <button class="modal-close" id="start-chat-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="chat-search-users">Search Creator:</label>
+          <div class="input-with-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="chat-search-users" placeholder="Search by username...">
+          </div>
+        </div>
+        
+        <div class="chat-search-results-list" id="chat-search-results">
+          <!-- Users filter list load here -->
+        </div>
+
+        <div class="selected-users-row" id="chat-selected-users-badge-row">
+          <!-- Badges for selected users -->
+        </div>
+
+        <div class="form-group flex-row justify-between align-center mt-4">
+          <label for="chat-is-group-toggle">Group Chat Thread:</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="chat-is-group-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group" id="group-name-input-row" style="display: none;">
+          <label for="chat-group-name">Group Name:</label>
+          <input type="text" id="chat-group-name" placeholder="e.g. Chill Chat, Coders Zone">
+        </div>
+
+        <div class="error-msg" id="start-chat-error"></div>
+        <button class="btn btn-primary btn-block" id="btn-start-chat-submit">Start Conversation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- G. PRIVACY CONFIG POPUP FOR PROFILES -->
+  <div class="modal-overlay" id="modal-profile-privacy">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3 id="priv-modal-title">Manage Connection</h3>
+        <button class="modal-close" id="profile-privacy-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body flex-col gap-4">
+        <button class="btn btn-block btn-secondary" id="btn-priv-close-friends"><i class="fa-solid fa-star text-warning"></i> Toggle Close Friend</button>
+        <button class="btn btn-block btn-secondary" id="btn-priv-mute"><i class="fa-solid fa-volume-xmark"></i> Toggle Mute Feed</button>
+        <button class="btn btn-block btn-secondary" id="btn-priv-restrict"><i class="fa-solid fa-triangle-exclamation"></i> Toggle Restrict Comments</button>
+        <button class="btn btn-block btn-danger" id="btn-priv-block"><i class="fa-solid fa-ban"></i> Toggle Block Creator</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="modal-delete-confirm">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3>Delete Content</h3>
+        <button class="modal-close" id="delete-confirm-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body flex-col gap-4 text-center">
+        <p style="margin-bottom: 20px; font-size: 0.95rem; color: var(--text-light);">Are you sure you want to permanently delete this content? This action cannot be undone.</p>
+        <div style="display: flex; gap: 12px; width: 100%;">
+          <button class="btn btn-block btn-secondary" id="btn-delete-cancel" style="margin: 0;">Cancel</button>
+          <button class="btn btn-block btn-danger" id="btn-delete-confirm-action" style="margin: 0;"><i class="fa-solid fa-trash"></i> Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- H. FOLLOWERS / FOLLOWING LIST MODAL -->
+  <div class="modal-overlay" id="modal-follow-list">
+    <div class="modal-card glass-panel max-sm animate-zoom">
+      <div class="modal-header">
+        <h3 id="follow-list-modal-title">Follow List</h3>
+        <button class="modal-close" id="follow-list-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="follow-list-content">
+        <!-- Dynamic followers/following content loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time dynamic notifications toast container -->
+  <div class="notification-toast-container" id="notification-toast-container"></div>
+
+  <!-- Core Javascript Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/ws.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
